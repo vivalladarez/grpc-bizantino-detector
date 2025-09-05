@@ -1,5 +1,5 @@
 import os
-os.environ.setdefault("RAY_DISABLE_WINDOWS_JOB_OBJECTS", "1")  # ajuda o Ray no Windows
+os.environ.setdefault("RAY_DISABLE_WINDOWS_JOB_OBJECTS", "1")  # Ray no Windows
 
 import grpc
 import numpy as np
@@ -50,11 +50,11 @@ def clientes(X, y, rotulo_cliente, seed=None):
         j = rng.integers(0, d)
         p_zero = 0.99
         mask_zero = rng.random(n) < p_zero
-        if mask_zero.all():  # garante ao menos 1 não-zerado
+        if mask_zero.all(): 
             mask_zero[rng.integers(0, n)] = False
 
         X[mask_zero, j] = 0.0
-        BIG = 1e6  # explodee
+        BIG = 10  # explodee
         X[~mask_zero, j] = BIG
         return X, y
 
@@ -102,7 +102,6 @@ def main():
     # Completa a lista de cenários para N_CLIENTES com "cliente_normal"
     comportamentos = (CENARIO + ["cliente_normal"] * N_CLIENTES)[:N_CLIENTES]
 
-    # Mapa de comportamentos por id_cliente
     print("\n[CLIENTE] Mapa de comportamentos:")
     for cid, comp in enumerate(comportamentos):
         print(f"  - id_cliente={cid}: {comp}")
@@ -133,8 +132,8 @@ def main():
     total = resp.total_clients
 
     print("\n[CLIENTE] RESULTADOS")
-    print(f"  total_clientes        : {total}")
-    print(f"  bizantinos_detectados : {num_biz} -> {ids_biz if num_biz else '[]'}")
+    print(f"  Total_clientes        : {total}")
+    print(f"  Bizantinos_detectados : {num_biz} -> {ids_biz if num_biz else '[]'}")
     for cid in ids_biz:
         if 0 <= cid < len(comportamentos):
             print(f"    - id={cid} | comportamento={comportamentos[cid]}")

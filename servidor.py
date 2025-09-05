@@ -1,4 +1,3 @@
-# servidor.py — detecção mínima (centróide + consistência de rótulos)
 from concurrent import futures
 import grpc
 import numpy as np
@@ -8,39 +7,31 @@ from sklearn.preprocessing import StandardScaler
 
 import bizantinos_pb2 as pb2
 import bizantinos_pb2_grpc as pb2_grpc
-# Se estiver usando trainer.proto, troque as duas linhas acima por:
-# import trainer_pb2 as pb2
-# import trainer_pb2_grpc as pb2_grpc
+
 
 # -------------------- ARMAZENAMENTO --------------------
 ARMAZENAMENTO = {}  # id_cliente -> (X, y)
 
 # -------------------- DETECÇÃO BIZANTINA (mínima, 2 sinais) --------------------
 def logica_bizantina(por_cliente, limiar_erro=0.35, iqr_k=3.0):
-    """
-    Detector mínimo:
-      - centroide_max: maior desvio (|mu_cliente_feature - mu_global_feature|) em z-score global.
-      - erro_consistencia: erro de nearest-centroid (consistência de rótulos).
-    Suspeito se centroide_max > (mediana + iqr_k*IQR) ou erro_consistencia > limiar_erro.
+    """ Suspeito se centroide_max > (mediana + iqr_k*IQR) ou erro_consistencia > limiar_erro.
+      - Centroide_max: maior desvio (|mu_cliente_feature - mu_global_feature|) em z-score global.
+      - Erro_consistencia: erro de nearest-centroid (consistência de rótulos).
     """
     clientes = sorted(por_cliente.keys())
     X_todos = np.vstack([por_cliente[c][0] for c in clientes])
     y_todos = np.concatenate([por_cliente[c][1] for c in clientes])
     classes = np.unique(y_todos)
 
-    # Padronização global (z-score)
-    scaler = StandardScaler()
+    scaler = StandardScaler() # Padronização global (z-score)
     Xz = scaler.fit_transform(X_todos)
 
-    # offsets por cliente
     quantidades = [len(por_cliente[c][1]) for c in clientes]
     offsets = np.cumsum([0] + quantidades)
 
-    # média global por feature (em z)
-    mu_global = Xz.mean(axis=0)
+    mu_global = Xz.mean(axis=0) # média global por feature (em z)
 
-    # centróides globais por classe (em z) para nearest-centroid
-    MU = np.stack([Xz[y_todos == k].mean(axis=0) for k in classes], axis=0)  # (K, D)
+    MU = np.stack([Xz[y_todos == k].mean(axis=0) for k in classes], axis=0)  # centróides globais por classe (em z) para nearest-centroid
 
     centroide_max = {}
     erro_consistencia = {}
@@ -50,16 +41,13 @@ def logica_bizantina(por_cliente, limiar_erro=0.35, iqr_k=3.0):
         Xc = Xz[s:e]
         yc = y_todos[s:e]
 
-        # Maior desvio da média do cliente em relação à média global (por feature)
         centroide_max[c] = float(np.abs(Xc.mean(axis=0) - mu_global).max())
 
-        # Erro de consistência via nearest-centroid
         dists = np.linalg.norm(Xc[:, None, :] - MU[None, :, :], axis=2)  # (n_c, K)
         pred = classes[np.argmin(dists, axis=1)]
         erro_consistencia[c] = float((pred != yc).mean())
 
-    # Limiar robusto para centroide_max: mediana + iqr_k * IQR
-    valores = np.array(list(centroide_max.values()), dtype=float)
+    valores = np.array(list(centroide_max.values()), dtype=float)  # Limiar robusto para centroide_max: mediana + iqr_k * IQR
     q1, q3 = np.percentile(valores, [25, 75])
     iqr = q3 - q1
     limiar_centroide_max = float(np.median(valores) + (iqr_k * iqr if iqr > 0 else 3.0))
@@ -101,12 +89,11 @@ class TreinadorServicer(pb2_grpc.TrainerServicer):
         X_todos = np.vstack([ARMAZENAMENTO[c][0] for c in clientes])
         y_todos = np.concatenate([ARMAZENAMENTO[c][1] for c in clientes])
 
-        # --- Detecção mínima ---
+        # Detecção 
         suspeitos, M = logica_bizantina(ARMAZENAMENTO, limiar_erro=0.35, iqr_k=3.0)
         biz = sorted(list(suspeitos))
         mantidos = [c for c in clientes if c not in suspeitos]
 
-        # Logs compactos
         print("[SERVIDOR] Métricas por cliente:")
         for c in clientes:
             print(
@@ -119,7 +106,7 @@ class TreinadorServicer(pb2_grpc.TrainerServicer):
         )
         print(f"[SERVIDOR] Bizantinos detectados = {biz}")
 
-        # --- Treino/avaliação com TODOS ---
+        # --- Treino todos ---
         Xtr, Xte, ytr, yte = train_test_split(
             X_todos, y_todos, test_size=0.2, random_state=42, stratify=y_todos
         )
@@ -128,7 +115,7 @@ class TreinadorServicer(pb2_grpc.TrainerServicer):
         acc_treino_todos = float(clf_todos.score(Xtr, ytr))
         acc_teste_todos  = float(clf_todos.score(Xte, yte))
 
-        # --- Treino/avaliação SEM bizantinos ---
+        # --- Treino SEM bizantinos ---
         if mantidos:
             Xk = np.vstack([ARMAZENAMENTO[c][0] for c in mantidos])
             yk = np.concatenate([ARMAZENAMENTO[c][1] for c in mantidos])
@@ -157,7 +144,7 @@ class TreinadorServicer(pb2_grpc.TrainerServicer):
 def serve():
     servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=8))
     pb2_grpc.add_TrainerServicer_to_server(TreinadorServicer(), servidor)
-    bind_addr = "0.0.0.0:50051"  # ou "127.0.0.1:50051" se for apenas local
+    bind_addr = "0.0.0.0:50051" 
     if servidor.add_insecure_port(bind_addr) <= 0:
         raise RuntimeError(f"Falha ao bindar em {bind_addr}")
     servidor.start()
