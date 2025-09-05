@@ -59,17 +59,10 @@ Crie um `venv` e ative-o
 pip install grpcio grpcio-tools ray scikit-learn numpy
 ```
 
-```bash
-pip install ray
-```
-
 ### 2. Gerar Stubs gRPC
-
+Execute no cmd
 ```bash
-python -m grpc_tools.protoc -I . \
-  --python_out . \
-  --grpc_python_out . \
-  bizantinos.proto
+python -m grpc_tools.protoc -I . --python_out . --grpc_python_out . bizantinos.proto
 ```
 
 Isso criará os arquivos:
