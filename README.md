@@ -1,4 +1,4 @@
-# 🛡️ gRPC Byzantine Fault Detector
+# gRPC Byzantine Fault Detector
 
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
 [![gRPC](https://img.shields.io/badge/gRPC-Protocol-green.svg)](https://grpc.io/)
