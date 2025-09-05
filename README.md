@@ -5,7 +5,7 @@
 [![Ray](https://img.shields.io/badge/Ray-Distributed-orange.svg)](https://ray.io/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-red.svg)](https://scikit-learn.org/)
 
-Sistema de treinamento distribuído com **gRPC** e **Ray** que simula clientes bizantinos (maliciosos) e implementa algoritmos de detecção para identificar e filtrar participantes suspeitos durante o treinamento federado.
+Sistema de treinamento distribuído com **gRPC** e **Ray** que simula clientes bizantinos (maliciosos) e implementa algoritmos de detecção para identificar e filtrar participantes suspeitos durante o treinamento.
 
 ## Índice
 
@@ -15,12 +15,11 @@ Sistema de treinamento distribuído com **gRPC** e **Ray** que simula clientes b
 - [Como Executar](#-como-executar)
 - [Tipos de Clientes Bizantinos](#-tipos-de-clientes-bizantinos)
 - [Algoritmo de Detecção](#-algoritmo-de-detecção)
-- [Interpretação dos Resultados](#-interpretação-dos-resultados)
-- [Métricas e Análise](#-métricas-e-análise)
+- [Resultados](#-resultados)
 
 ## Visão Geral
 
-Este projeto implementa um sistema de **aprendizado federado resiliente** que:
+Este projeto implementa um sistema que:
 
 - **Distribui o treinamento** entre múltiplos clientes usando gRPC
 - **Detecta clientes bizantinos** através de métricas estatísticas
@@ -34,7 +33,7 @@ Este projeto implementa um sistema de **aprendizado federado resiliente** que:
 Cliente 1 (Normal)    ─┐
 Cliente 2 (Normal)    ─┤
 Cliente 3 (Bizantino) ─┼─► Servidor gRPC ─► Detector Bizantino ─► Random Forest
-Cliente 4 (Bizantino) ─┤                                          ├─► Modelo Completo
+Cliente 4 (Normal) ─┤                                          ├─► Modelo Completo
 Cliente 5 (Normal)    ─┘                                          └─► Modelo Filtrado
 ```
 
