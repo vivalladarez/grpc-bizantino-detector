@@ -245,5 +245,5 @@ CENARIO = ["cliente_normal", "cliente_normal", "cliente_altera_1feature", "clien
 
 ## Licença
 
-Este projeto foi desenvolvido para atender a prática 3 [Laboratório 2](https://ic.unicamp.br/~allanms/mo809-S22025/labs/Lab-02/) da disciplina Tópicos em Computação Distribuída IC UNICAMP.
+Este projeto foi desenvolvido para atender a Atividade 1 [Laboratório 2](https://ic.unicamp.br/~allanms/mo809-S22025/labs/Lab-02/) da disciplina Tópicos em Computação Distribuída IC UNICAMP.
 
