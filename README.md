@@ -9,13 +9,13 @@ Sistema de treinamento distribuído com **gRPC** e **Ray** que simula clientes b
 
 ## Índice
 
-- [Visão Geral](#-visão-geral)
-- [Arquitetura](#️-arquitetura)
-- [Instalação e Configuração](#️-instalação-e-configuração)
-- [Como Executar](#-como-executar)
-- [Tipos de Clientes Bizantinos](#-tipos-de-clientes-bizantinos)
-- [Algoritmo de Detecção](#-algoritmo-de-detecção)
-- [Resultados](#-resultados)
+- [Visão Geral](#visão-geral)
+- [Arquitetura](#arquitetura)
+- [Instalação e Configuração](#instalação-e-configuração)
+- [Como Executar](#como-executar)
+- [Tipos de Clientes Bizantinos](#tipos-de-clientes-bizantinos)
+- [Algoritmo de Detecção](#algoritmo-de-detecção)
+- [Resultados](#resultados)
 
 ## Visão Geral
 
