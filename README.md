@@ -33,7 +33,7 @@ Este projeto implementa um sistema que:
 Cliente 1 (Normal)    ─┐
 Cliente 2 (Normal)    ─┤
 Cliente 3 (Bizantino) ─┼─► Servidor gRPC ─► Detector Bizantino ─► Random Forest
-Cliente 4 (Normal) ─┤                                          ├─► Modelo Completo
+Cliente 4 (Normal)    ─┤                                          ├─► Modelo Completo
 Cliente 5 (Normal)    ─┘                                          └─► Modelo Filtrado
 ```
 
