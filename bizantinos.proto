@@ -1,0 +1,37 @@
+syntax = "proto3";
+package trainer;
+
+message Sample {
+  repeated float features = 1; // vetor de atributos (x)
+  int32 label = 2;             // rótulo (y)
+}
+
+message ClientBatch {
+  int32 client_id = 1;
+  repeated Sample samples = 2; // lote desse cliente
+}
+
+message SubmitReply {
+  bool ok = 1;
+  string detail = 2;
+  int32 received_clients = 3; // quantos já recebidos no servidor
+}
+
+message TrainRequest {
+  int32 expected_clients = 1; // ex.: 5
+}
+
+message TrainResponse {
+  double train_acc_all = 1;
+  double train_acc_filtered = 2;
+  double test_acc_all = 3;
+  double test_acc_filtered = 4;
+  int32 total_clients = 5;
+  int32 filtered_clients = 6;
+  repeated int32 byzantine_clients = 7;
+}
+
+service Trainer {
+  rpc Submit(ClientBatch) returns (SubmitReply);
+  rpc Train(TrainRequest) returns (TrainResponse);
+}
