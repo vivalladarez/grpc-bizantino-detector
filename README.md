@@ -53,8 +53,14 @@ Cliente 5 (Normal)    ─┘                                          └─► 
 
 ### 1. Instalar Dependências
 
+Crie um `venv` e ative-o
+
 ```bash
 pip install grpcio grpcio-tools ray scikit-learn numpy
+```
+
+```bash
+pip install ray
 ```
 
 ### 2. Gerar Stubs gRPC
